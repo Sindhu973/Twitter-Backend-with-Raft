@@ -171,3 +171,179 @@ func TestUpdatePost(t *testing.T) {
 		}
 	}
 }
+
+// Test to DeletePost to the storage of memory type
+func TestDeletePost(t *testing.T) {
+	user := "testuser"
+	password := "password"
+	title := "title"
+	content := "content"
+
+	storage, err := CreateNewStorage("memory")
+
+	if err != nil {
+		t.Error(err)
+	}
+
+	if storage == nil {
+		t.Error("Storage is nil")
+	}
+
+	err = storage.AddUser(user, password)
+	if err != nil {
+		t.Error(err)
+	}
+
+	err = storage.CreatePost(user, title, content)
+	if err != nil {
+		t.Error(err)
+	}
+
+	err = storage.DeletePost(user, title)
+	if err != nil {
+		t.Error(err)
+	}
+
+	posts, err := storage.GetPosts(user)
+	if err != nil {
+		t.Error(err)
+	}
+
+	if len(posts) != 0 {
+		t.Error("Post not deleted")
+	}
+
+}
+
+// Test to AddFollowing to the storage of memory type
+func TestAddFollowings(t *testing.T) {
+	user := "testuser"
+	password := "password"
+	follower := "follower"
+
+	storage, err := CreateNewStorage("memory")
+	if err != nil {
+		t.Error(err)
+	}
+	if storage == nil {
+		t.Error("Storage is nil")
+	}
+
+	err = storage.AddUser(user, password)
+	if err != nil {
+		t.Error(err)
+	}
+
+	err = storage.AddUser(follower, password)
+	if err != nil {
+		t.Error(err)
+	}
+
+	err = storage.AddFollowing(user, follower)
+	if err != nil {
+		t.Error(err)
+	}
+
+	followings, err := storage.GetFollowings(user)
+	if err != nil {
+		t.Error(err)
+	}
+
+	if len(followings) != 1 {
+		t.Error("Following not added")
+	}
+
+	if len(followings) > 0 {
+		if followings[0] != follower {
+			t.Error("Following not added")
+		}
+	}
+}
+
+// Test to GetFollowings to the storage of memory type
+func TestGetFollowings(t *testing.T) {
+	user := "testuser"
+	password := "password"
+	follower := "follower"
+
+	storage, err := CreateNewStorage("memory")
+	if err != nil {
+		t.Error(err)
+	}
+	if storage == nil {
+		t.Error("Storage is nil")
+	}
+
+	err = storage.AddUser(user, password)
+	if err != nil {
+		t.Error(err)
+	}
+
+	err = storage.AddUser(follower, password)
+	if err != nil {
+		t.Error(err)
+	}
+
+	err = storage.AddFollowing(user, follower)
+	if err != nil {
+		t.Error(err)
+	}
+
+	followings, err := storage.GetFollowings(user)
+	if err != nil {
+		t.Error(err)
+	}
+
+	if len(followings) != 1 {
+		t.Error("Following not added")
+	}
+
+	if len(followings) > 0 {
+		if followings[0] != follower {
+			t.Error("Following not added")
+		}
+	}
+}
+
+func TestDeleteFollowing(t *testing.T) {
+	user := "testuser"
+	password := "password"
+	follower := "follower"
+
+	storage, err := CreateNewStorage("memory")
+	if err != nil {
+		t.Error(err)
+	}
+	if storage == nil {
+		t.Error("Storage is nil")
+	}
+
+	err = storage.AddUser(user, password)
+	if err != nil {
+		t.Error(err)
+	}
+
+	err = storage.AddUser(follower, password)
+	if err != nil {
+		t.Error(err)
+	}
+
+	err = storage.AddFollowing(user, follower)
+	if err != nil {
+		t.Error(err)
+	}
+
+	err = storage.DeleteFollowing(user, follower)
+	if err != nil {
+		t.Error(err)
+	}
+
+	followings, err := storage.GetFollowings(user)
+	if err != nil {
+		t.Error(err)
+	}
+
+	if len(followings) != 0 {
+		t.Error("Following not deleted")
+	}
+}
