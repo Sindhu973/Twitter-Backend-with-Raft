@@ -2,6 +2,7 @@ package auth
 
 import (
 	"errors"
+	"fmt"
 	"net/http"
 	"time"
 
@@ -66,14 +67,15 @@ func VerifyJWT(endpointHandler func(writer http.ResponseWriter, request *http.Re
 			})
 			if err != nil {
 				if err == jwt.ErrSignatureInvalid {
-					writer.WriteHeader(http.StatusUnauthorized)
+					fmt.Fprintf(writer, "Status Unauthorized")
 					return
 				} else {
-					writer.Write([]byte(err.Error()))
+					fmt.Fprintf(writer, err.Error())
+					return
 				}
 			}
 			if !tkn.Valid {
-				writer.WriteHeader(http.StatusUnauthorized)
+				fmt.Fprintf(writer, "Status Unauthorized")
 				return
 			}
 			// #============================================================================================
@@ -84,7 +86,7 @@ func VerifyJWT(endpointHandler func(writer http.ResponseWriter, request *http.Re
 			token := jwt.NewWithClaims(jwt.SigningMethodHS256, claims)
 			tokenString, err := token.SignedString([]byte(AuthConfig.SecretKey))
 			if err != nil {
-				writer.WriteHeader(http.StatusInternalServerError)
+				fmt.Fprintf(writer, "Internal Server Error")
 				return
 			}
 			http.SetCookie(writer, &http.Cookie{
@@ -97,10 +99,10 @@ func VerifyJWT(endpointHandler func(writer http.ResponseWriter, request *http.Re
 			return
 		} else {
 			if err == http.ErrNoCookie {
-				writer.WriteHeader(http.StatusUnauthorized)
+				fmt.Fprintf(writer, "Status Unauthorized")
 				return
 			}
-			writer.WriteHeader(http.StatusBadRequest)
+			fmt.Fprintf(writer, "Status Bad Request")
 			return
 
 		}
