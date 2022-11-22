@@ -219,7 +219,7 @@ func TestDeletePost(t *testing.T) {
 func TestAddFollowings(t *testing.T) {
 	user := "testuser"
 	password := "password"
-	follower := "follower"
+	following := "following"
 
 	storage, err := CreateNewStorage("memory")
 	if err != nil {
@@ -234,12 +234,12 @@ func TestAddFollowings(t *testing.T) {
 		t.Error(err)
 	}
 
-	err = storage.AddUser(follower, password)
+	err = storage.AddUser(following, password)
 	if err != nil {
 		t.Error(err)
 	}
 
-	err = storage.AddFollowing(user, follower)
+	err = storage.AddFollowing(user, following)
 	if err != nil {
 		t.Error(err)
 	}
@@ -254,7 +254,7 @@ func TestAddFollowings(t *testing.T) {
 	}
 
 	if len(followings) > 0 {
-		if followings[0] != follower {
+		if followings[0] != following {
 			t.Error("Following not added")
 		}
 	}
@@ -264,7 +264,7 @@ func TestAddFollowings(t *testing.T) {
 func TestGetFollowings(t *testing.T) {
 	user := "testuser"
 	password := "password"
-	follower := "follower"
+	following := "following"
 
 	storage, err := CreateNewStorage("memory")
 	if err != nil {
@@ -279,12 +279,12 @@ func TestGetFollowings(t *testing.T) {
 		t.Error(err)
 	}
 
-	err = storage.AddUser(follower, password)
+	err = storage.AddUser(following, password)
 	if err != nil {
 		t.Error(err)
 	}
 
-	err = storage.AddFollowing(user, follower)
+	err = storage.AddFollowing(user, following)
 	if err != nil {
 		t.Error(err)
 	}
@@ -299,7 +299,7 @@ func TestGetFollowings(t *testing.T) {
 	}
 
 	if len(followings) > 0 {
-		if followings[0] != follower {
+		if followings[0] != following {
 			t.Error("Following not added")
 		}
 	}
