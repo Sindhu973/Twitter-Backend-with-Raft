@@ -1,0 +1,20 @@
+syntax = "proto3";
+
+option go_package = "garuda.com/m/web";
+
+message User {
+    string username = 1;
+    string hash_password = 2;
+    repeated Posts posts = 3;
+    repeated string following = 4;
+}
+
+message Posts {
+    string title = 1;
+    string content = 2;
+}
+
+message UserRequest {
+    string username = 1;
+    string password = 2;
+}
