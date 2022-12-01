@@ -16,12 +16,9 @@ func TestCreatePost(t *testing.T) {
 		t.Error(err)
 	}
 
-	token, _, err := auth.Login(user, password)
+	err = auth.Login(user, password)
 	if err != nil {
 		t.Error(err)
-	}
-	if token == "" {
-		t.Error("Token is empty")
 	}
 
 	title := "testtitle"
@@ -43,12 +40,9 @@ func TestGetPosts(t *testing.T) {
 		t.Error(err)
 	}
 
-	token, _, err := auth.Login(user, password)
+	err = auth.Login(user, password)
 	if err != nil {
 		t.Error(err)
-	}
-	if token == "" {
-		t.Error("Token is empty")
 	}
 
 	title := "testtitle"
@@ -90,12 +84,9 @@ func TestAddFollowings(t *testing.T) {
 		t.Error(err)
 	}
 
-	token, _, err := auth.Login(user, password)
+	err = auth.Login(user, password)
 	if err != nil {
 		t.Error(err)
-	}
-	if token == "" {
-		t.Error("Token is empty")
 	}
 
 	err = AddFollowing(user, following)
@@ -131,12 +122,9 @@ func TestGetFollowings(t *testing.T) {
 		t.Error(err)
 	}
 
-	token, _, err := auth.Login(user, password)
+	err = auth.Login(user, password)
 	if err != nil {
 		t.Error(err)
-	}
-	if token == "" {
-		t.Error("Token is empty")
 	}
 
 	err = AddFollowing(user, following)
@@ -172,12 +160,9 @@ func TestDeleteFollowing(t *testing.T) {
 		t.Error(err)
 	}
 
-	token, _, err := auth.Login(user, password)
+	err = auth.Login(user, password)
 	if err != nil {
 		t.Error(err)
-	}
-	if token == "" {
-		t.Error("Token is empty")
 	}
 
 	err = AddFollowing(user, following)

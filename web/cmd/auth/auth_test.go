@@ -25,26 +25,21 @@ func TestLogin(t *testing.T) {
 		t.Error(err)
 	}
 
-	token, _, err := Login(user, password)
+	err = Login(user, password)
 	if err != nil {
 		t.Error(err)
 	}
-
-	if token == "" {
-		t.Error("Token is empty")
-	}
-
-	_, _, err = Login(user, "wrongpassword")
+	err = Login(user, "wrongpassword")
 	if err == nil {
 		t.Error("Login with wrong password should fail")
 	}
 
-	_, _, err = Login("wronguser", password)
+	err = Login("wronguser", password)
 	if err == nil {
 		t.Error("Login with wrong user should fail")
 	}
 
-	_, _, err = Login("wronguser", "wrongpassword")
+	err = Login("wronguser", "wrongpassword")
 	if err == nil {
 		t.Error("Login with wrong user and wrong password should fail")
 	}

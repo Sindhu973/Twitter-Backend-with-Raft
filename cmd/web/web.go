@@ -9,7 +9,6 @@ import (
 
 	"garuda.com/m/cmd/utils"
 	"garuda.com/m/web"
-	"garuda.com/m/web/cmd/auth"
 )
 
 func sayhelloName(w http.ResponseWriter, r *http.Request) {
@@ -32,12 +31,17 @@ func login(w http.ResponseWriter, r *http.Request) {
 		t.Execute(w, nil)
 	} else {
 		r.ParseForm()
-		token, time, err := web.Login(r.Form.Get("username"), r.Form.Get("password"))
+		err := web.Login(r.Form.Get("username"), r.Form.Get("password"))
 		if err != nil {
 			fmt.Fprintf(w, "Login Failed : %s", err)
 		} else {
-			http.SetCookie(w, &http.Cookie{Name: "token", Value: token, Expires: time})
-			http.Redirect(w, r, "/home", 302)
+			token, time, err := utils.GenerateJWT(r.Form.Get("username"))
+			if err != nil {
+				fmt.Fprintf(w, "Failed to generate token : %s", err)
+			} else {
+				http.SetCookie(w, &http.Cookie{Name: "token", Value: token, Expires: time})
+				http.Redirect(w, r, "/home", 302)
+			}
 		}
 	}
 }
@@ -63,7 +67,7 @@ type HomeContext struct {
 	Following int
 }
 
-func home(w http.ResponseWriter, r *http.Request, claims *auth.Claims) {
+func home(w http.ResponseWriter, r *http.Request, claims *utils.Claims) {
 	if r.Method == "GET" {
 		t, _ := template.ParseFiles("home.gtpl")
 		users, err := web.GetFollowings(claims.Username)
@@ -85,7 +89,7 @@ func home(w http.ResponseWriter, r *http.Request, claims *auth.Claims) {
 	}
 }
 
-func createPost(w http.ResponseWriter, r *http.Request, claims *auth.Claims) {
+func createPost(w http.ResponseWriter, r *http.Request, claims *utils.Claims) {
 	if r.Method == "POST" {
 		r.ParseForm()
 		err := web.CreatePost(claims.Username, r.Form.Get("title"), r.Form.Get("content"))
@@ -96,7 +100,7 @@ func createPost(w http.ResponseWriter, r *http.Request, claims *auth.Claims) {
 	}
 }
 
-func followUser(w http.ResponseWriter, r *http.Request, claims *auth.Claims) {
+func followUser(w http.ResponseWriter, r *http.Request, claims *utils.Claims) {
 	if r.Method == "POST" {
 		r.ParseForm()
 		err := web.AddFollowing(claims.Username, r.Form.Get("username"))
@@ -111,7 +115,7 @@ func followUser(w http.ResponseWriter, r *http.Request, claims *auth.Claims) {
 	}
 }
 
-func deleteFollowing(w http.ResponseWriter, r *http.Request, claims *auth.Claims) {
+func deleteFollowing(w http.ResponseWriter, r *http.Request, claims *utils.Claims) {
 	if r.Method == "POST" {
 		r.ParseForm()
 		err := web.DeleteFollowing(claims.Username, r.Form.Get("username"))
@@ -136,10 +140,10 @@ func main() {
 	http.HandleFunc("/", sayhelloName) // setting router rule
 	http.HandleFunc("/login", login)
 	http.HandleFunc("/register", register)
-	http.HandleFunc("/home", web.VerifyJWT(home))
-	http.HandleFunc("/createPost", web.VerifyJWT(createPost))
-	http.HandleFunc("/followUser", web.VerifyJWT(followUser))
-	http.HandleFunc("/deleteFollowing", web.VerifyJWT(deleteFollowing))
+	http.HandleFunc("/home", utils.VerifyJWT(home))
+	http.HandleFunc("/createPost", utils.VerifyJWT(createPost))
+	http.HandleFunc("/followUser", utils.VerifyJWT(followUser))
+	http.HandleFunc("/deleteFollowing", utils.VerifyJWT(deleteFollowing))
 	http.HandleFunc("/logout", logout)
 	err := http.ListenAndServe(":9090", nil) // setting listening port
 	if err != nil {

@@ -1,9 +1,6 @@
 package web
 
 import (
-	"net/http"
-	"time"
-
 	"garuda.com/m/web/cmd/activity"
 	"garuda.com/m/web/cmd/auth"
 )
@@ -12,12 +9,8 @@ func Register(username, password string) error {
 	return auth.Register(username, password)
 }
 
-func Login(username, password string) (string, time.Time, error) {
+func Login(username, password string) error {
 	return auth.Login(username, password)
-}
-
-func VerifyJWT(endpointHandler func(writer http.ResponseWriter, request *http.Request, claims *auth.Claims)) http.HandlerFunc {
-	return auth.VerifyJWT(endpointHandler)
 }
 
 func CreatePost(username, title, content string) error {
