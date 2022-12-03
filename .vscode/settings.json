@@ -1,3 +1,14 @@
 {
-  "go.inferGopath": false
+  "go.inferGopath": false,
+  "cSpell.words": [
+    "extendee",
+    "garuda",
+    "gtpl",
+    "Idxs",
+    "protobuf",
+    "protoc",
+    "protoimpl",
+    "protoreflect",
+    "structs"
+  ]
 }
