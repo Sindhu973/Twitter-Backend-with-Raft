@@ -7,6 +7,7 @@ import (
 	"time"
 
 	"github.com/golang-jwt/jwt/v4"
+	"google.golang.org/grpc"
 )
 
 type Claims struct {
@@ -14,11 +15,20 @@ type Claims struct {
 	jwt.RegisteredClaims
 }
 
-func AddAuthorToPosts(author string, posts *[]map[string]string) {
-	for _, post := range *posts {
-		post["author"] = author
+func WithGRPCConnection(serverType string, endpointHandler func(conn *grpc.ClientConn, writer http.ResponseWriter, request *http.Request)) http.HandlerFunc {
+	servers := map[string]string{
+		"authServer":     "localhost:4040",
+		"activityServer": "localhost:4041",
 	}
-	return
+	return http.HandlerFunc(func(writer http.ResponseWriter, request *http.Request) {
+		conn, err := grpc.Dial(servers[serverType], grpc.WithInsecure())
+		if err != nil {
+			fmt.Fprintf(writer, "Internal Server Error")
+			return
+		}
+		defer conn.Close()
+		endpointHandler(conn, writer, request)
+	})
 }
 
 func VerifyJWT(endpointHandler func(writer http.ResponseWriter, request *http.Request, claims *Claims)) http.HandlerFunc {
