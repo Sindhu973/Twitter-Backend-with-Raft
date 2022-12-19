@@ -19,7 +19,7 @@ func Login(username, password string) error {
 	if ok != nil {
 		return errors.New("user does not exist")
 	}
-	if CheckPasswordHash(password, user.Hash_password) {
+	if CheckPasswordHash(password, user.HashPassword) {
 		// expirationTime := time.Now().Add(5 * time.Minute)
 		// claims := &Claims{
 		// 	Username: username,

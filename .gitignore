@@ -1,6 +1,11 @@
-cmd/.DS_Store
 model/activity.pb.go
 model/activity_grpc.pb.go
 model/auth_grpc.pb.go
 model/auth.pb.go
 model/common.pb.go
+infra*/*
+.DS_Store
+._.DS_Store
+**/.DS_Store
+**/._.DS_Store
+model/structs.pb.go

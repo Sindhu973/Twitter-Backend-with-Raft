@@ -2,6 +2,8 @@ package auth
 
 import (
 	"testing"
+
+	"garuda.com/m/web/cmd/auth/storage"
 )
 
 // Test to check if registering a user is working
@@ -20,12 +22,7 @@ func TestLogin(t *testing.T) {
 	user := "testuser"
 	password := "password"
 
-	err := Register(user, password)
-	if err != nil {
-		t.Error(err)
-	}
-
-	err = Login(user, password)
+	err := Login(user, password)
 	if err != nil {
 		t.Error(err)
 	}
@@ -79,4 +76,16 @@ func TestCheckPassword(t *testing.T) {
 	if ok {
 		t.Error("CheckPassword with wrong password should fail")
 	}
+}
+
+func TestEnder(t *testing.T) {
+	// Test to make the storage empty
+	storage, err := storage.CreateNewStorage("raft")
+	if err != nil {
+		t.Error(err)
+	}
+	if storage == nil {
+		t.Error("Storage is nil")
+	}
+	storage.DeleteUser("testuser")
 }

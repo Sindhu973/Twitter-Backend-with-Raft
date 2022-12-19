@@ -52,12 +52,18 @@ func TestUpdateUser(t *testing.T) {
 		t.Error(err)
 	}
 	prevUser, err := storage.GetUser(testUser)
+	if err != nil {
+		t.Error(err)
+	}
 	err = storage.UpdateUser(testUser, "newpassword")
 	if err != nil {
 		t.Error(err)
 	}
 	currUser, err := storage.GetUser(testUser)
-	if prevUser.Hash_password == currUser.Hash_password {
+	if err != nil {
+		t.Error(err)
+	}
+	if prevUser.HashPassword == currUser.HashPassword {
 		t.Error("User with username " + testUser + " not updated in memory storage")
 	}
 }
@@ -305,6 +311,7 @@ func TestGetFollowings(t *testing.T) {
 	}
 }
 
+// Test to DeleteFollowings to the source of memory type
 func TestDeleteFollowing(t *testing.T) {
 	user := "testuser"
 	password := "password"
