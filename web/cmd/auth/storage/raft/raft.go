@@ -1,4 +1,66 @@
+package raft
 
+import (
+	"context"
+	"errors"
+
+	"garuda.com/m/model"
+	clientv3 "go.etcd.io/etcd/client/v3"
+	"google.golang.org/protobuf/proto"
+)
+
+//  the way we have to think about this now is one giant key value store so let us say that each user name is the key and the
+
+type Raft struct {
+	cli *clientv3.Client
+}
+
+func CreateNewRaft() *Raft {
+	cli, err := clientv3.New(clientv3.Config{
+		Endpoints:   Endpoints,
+		DialTimeout: DialTimeout,
+	})
+	if err != nil {
+		panic(err)
+	}
+	// context with timeout
+	return &Raft{cli: cli}
+}
+
+func (r *Raft) AddUser(username string, hashedPassword string) error {
+	if _, err := r.GetUserHelper(username); err == nil {
+		return errors.New("user already exists")
+	} else if err != nil && err.Error() != "User not found" {
+		return err
+	}
+	user := &model.UserStg{
+		Username: username, HashPassword: hashedPassword,
+	}
+	userData, err := proto.Marshal(user)
+	if err != nil {
+		return err
+	}
+	ctx, cancel := context.WithTimeout(context.Background(), RequestTimeout)
+	_, err = r.cli.KV.Put(ctx, username, string(userData))
+	cancel()
+	if err != nil {
+		return err
+	}
+	return nil
+}
+
+func (r *Raft) GetUser(username string) (model.UserStg, error) {
+	value, err := r.GetUserHelper(username)
+	if err != nil {
+		return model.UserStg{}, err
+	}
+	user := model.UserStg{}
+	err = proto.Unmarshal(value, &user)
+	if err != nil {
+		return model.UserStg{}, err
+	}
+	return user, nil
+}
 
 func (r *Raft) UpdateUser(username, hash_password string) error {
 	_, err := r.GetUserHelper(username)

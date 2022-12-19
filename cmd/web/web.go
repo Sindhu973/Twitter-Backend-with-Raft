@@ -44,6 +44,7 @@ func register(w http.ResponseWriter, r *http.Request) {
 		r.ParseForm()
 		_, err := authClient.Register(r.Context(), &model.UserRequest{Username: r.Form.Get("username"), Password: r.Form.Get("password")})
 		if err != nil {
+			fmt.Fprintf(w, "Register Failed : %s", err)
 			fmt.Println("error:", err)
 		} else {
 			http.Redirect(w, r, "/login", http.StatusFound)
