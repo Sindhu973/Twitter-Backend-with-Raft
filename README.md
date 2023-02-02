@@ -1,4 +1,4 @@
-# Distributed Finaly Project Course Materials
+# Twitter Backend with Raft
 
 ## Protobuf Generator
 
